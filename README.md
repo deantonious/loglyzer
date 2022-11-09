@@ -31,14 +31,9 @@ forty@two:~# cd loglyzer
 forty@two:~# docker build --tag loglyzer .
 ```
 
-Example of running the CLI using the built image:
+Example of running the CLI using the built image (remember mapping a volume to be able to access the file system):
 ``` 
-forty@two:~# docker run --rm loglyzer data/access.log --eps
-```
-
-Remember mapping a volume to be able to access save files:
-``` 
-forty@two:~# docker run -v /home/forty:/app --rm loglyzer data/access.log --mfip
+forty@two:~# docker run -v /home/forty:/app --rm loglyzer data/access.log --eps --mfip
 ```
 
 ## From Source
