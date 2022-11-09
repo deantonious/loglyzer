@@ -25,7 +25,7 @@ def main(
 ) -> None:
 
     if path is None:
-        print('No file was specified. Try using --help.')
+        typer.secho('[ERROR] No file was specified. Try using --help.', fg=typer.colors.RED)
         raise typer.Exit()
 
     # Create a list of file paths with provided file path / directory path
@@ -40,25 +40,25 @@ def main(
     elif os.path.isfile(path):
         files.append(path)
     else:
-        print('File type not supported...')
+        typer.secho('[ERROR] File type not supported...', fg=typer.colors.RED)
 
     results = []
     for file_path in files:
         try:
             result = analyze(file_path, most_frequent_ip=most_frequent_ip, least_frequent_ip=least_frequent_ip, events_per_second=events_per_second, exchanged_bytes=exchanged_bytes)
-            print(f'[INFO] Analysis results for file {file_path}')
-            print(f'[RESULT] {result}')
+            typer.secho(f'[INFO] Analysis results for file {file_path}', fg=typer.colors.BLUE)
+            typer.secho(f'[INFO] {result}', fg=typer.colors.BLUE)
             results.append({
                 'file_path': file_path,
                 'analysis_results': result
             })
         except:
-            print(f'[ERROR] Could not read file {file_path}')
+            typer.secho(f'[ERROR] Could not read file {file_path}', fg=typer.colors.RED)
     
     timestamp = datetime.now().strftime('%d_%m_%Y_%H_%M_%S')
 
     with open(f'output_{timestamp}.json', 'w') as outfile:
-        print(f'[INFO] Results saved to {outfile.name}')
+        typer.secho(f'[SUCCESS] Results saved to {outfile.name}', fg=typer.colors.GREEN)
         json.dump(results, outfile)
 
     return
