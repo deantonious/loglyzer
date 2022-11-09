@@ -1,5 +1,16 @@
-# Loglyzer
-Command-line tool to analyze the contents of Squid Proxy log files. The tool can provide the following details:
+```
+ ▄█        ▄██████▄     ▄██████▄   ▄█       ▄██   ▄    ▄███████▄     ▄████████    ▄████████ 
+███       ███    ███   ███    ███ ███       ███   ██▄ ██▀     ▄██   ███    ███   ███    ███ 
+███       ███    ███   ███    █▀  ███       ███▄▄▄███       ▄███▀   ███    █▀    ███    ███ 
+███       ███    ███  ▄███        ███       ▀▀▀▀▀▀███  ▀█▀▄███▀▄▄  ▄███▄▄▄      ▄███▄▄▄▄██▀ 
+███       ███    ███ ▀▀███ ████▄  ███       ▄██   ███   ▄███▀   ▀ ▀▀███▀▀▀     ▀▀███▀▀▀▀▀   
+███       ███    ███   ███    ███ ███       ███   ███ ▄███▀         ███    █▄  ▀███████████ 
+███▌    ▄ ███    ███   ███    ███ ███▌    ▄ ███   ███ ███▄     ▄█   ███    ███   ███    ███ 
+█████▄▄██  ▀██████▀    ████████▀  █████▄▄██  ▀█████▀   ▀████████▀   ██████████   ███    ███ 
+▀                                 ▀                                              ███    ███ 
+```
+
+Command-line tool to analyze the content of Squid Proxy log files. The tool can provide the following details:
 * Most frequent IP/s and the occurrence  count
 * Least frequent IP/s and the occurrence  count
 * Events per second (EPS)
