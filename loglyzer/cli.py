@@ -9,28 +9,27 @@ import json
 
 app = typer.Typer()
 
-def version_callback(value: bool) -> None:
-    if value:
-        typer.echo(f'{__app_name__} v{__version__}')
-        raise typer.Exit()
-
 @app.command()
 def main(
     path: str = typer.Argument(None, help='Squid Proxy access log file.'),
-    version: Optional[bool] = typer.Option(None, '--version', '-v', help='Version information.', callback=version_callback, is_eager=True ),
+    version: Optional[bool] = typer.Option(None, '--version', '-v', help='Version information.'),
     most_frequent_ip: Optional[bool] = typer.Option(False, '--mfip', help='Most frequent IP.'),
     least_frequent_ip: Optional[bool] = typer.Option(False, '--lfip', help='Least frequent IP.'),
     events_per_second: Optional[bool] = typer.Option(False, '--eps', help='Events per second.'),
     exchanged_bytes: Optional[bool] = typer.Option(False, '--bytes', help='Total amount of bytes exchanged.')
 ) -> None:
 
+    if version:
+        typer.echo(f'{__app_name__} v{__version__}')
+        raise typer.Exit()
+
     if path is None:
         typer.secho('[ERROR] No file was specified. Try using --help.', fg=typer.colors.RED)
         raise typer.Exit()
 
-    # Create a list of file paths with provided file path / directory path
     files = []
-
+    # Create a list of file paths with provided file path / directory path
+    # If a directory is provided, all the files will be added (invalid ones won't be read)
     if os.path.isdir(path):
         for file in os.listdir(path):
             file_path = os.path.join(path, file)
@@ -42,6 +41,7 @@ def main(
     else:
         typer.secho('[ERROR] File type not supported...', fg=typer.colors.RED)
 
+    # Iterate the files, analyze them individually and add the result to a list
     results = []
     for file_path in files:
         try:
@@ -55,6 +55,7 @@ def main(
         except:
             typer.secho(f'[ERROR] Could not read file {file_path}', fg=typer.colors.RED)
     
+    # Save the results list to a file
     timestamp = datetime.now().strftime('%d_%m_%Y_%H_%M_%S')
 
     with open(f'output_{timestamp}.json', 'w') as outfile:
@@ -79,6 +80,9 @@ def analyze(logfile_path: str, most_frequent_ip: bool = False, least_frequent_ip
     ip_occurrences = {}
     output = {}
 
+    # Read the provided file and iterate over the lines. Reading one line 
+    # at a time will be more memory efficent than using a library to load 
+    # the entire file to memory (i.e. pandas)
     with open(logfile_path, mode='r', encoding='utf-8') as file:
             
             for f_line in file:
@@ -89,7 +93,7 @@ def analyze(logfile_path: str, most_frequent_ip: bool = False, least_frequent_ip
                     pattern = re.compile(r'^(\d{10}.\d{3})\s+(\d+)\s(\S+)\s(\S+)\s(\d+)\s(\S+)\s(\S+)\s(\S+)\s(\S+)\s(\S+)')
                     result = pattern.match(line)
                     
-                    # If matched result
+                    # If the line matched the pattern
                     if result:
                         if events_per_second:
                             # Increase event count
@@ -116,6 +120,8 @@ def analyze(logfile_path: str, most_frequent_ip: bool = False, least_frequent_ip
                             # Add exchanged bytes
                             total_bytes += int(result.group(2)) + int(result.group(5))
 
+            # From the dictionary, get the keys (ips) with the most and least occurrences
+            # If multiple IPs have the same amount of occurrences, they will all be added to the list
             if most_frequent_ip:            
                 most_frequent_ips = [key for key, value in ip_occurrences.items() if value == max(ip_occurrences.values())]
                 most_frequent_ips_occurrences = ip_occurrences[most_frequent_ips[0]]
